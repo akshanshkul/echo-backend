@@ -1,0 +1,38 @@
+{
+  "name": "loom-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --watch src --watch .env --ext js,json,env src/server.js",
+    "test": "node src/smoke-test.js && node src/rate-limit-test.js",
+    "dev:memory": "nodemon --watch src --ext js,json src/dev-memory.js",
+    "upload-logo": "node src/upload-brand.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "bench": "node bench/load-test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1161.0",
+    "@aws-sdk/s3-request-presigner": "^3.1161.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.4",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.10",
+    "socket.io-client": "^4.8.4"
+  }
+}
