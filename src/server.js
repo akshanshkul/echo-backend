@@ -1,10 +1,13 @@
 import http from 'node:http';
+import dns from 'node:dns';
 import { config } from './config.js';
 import { connectDb } from './db.js';
 import { createApp } from './app.js';
 import { initRealtime } from './realtime.js';
 import { approveLegacyUsers, splitConversations, dropLegacyMessageIndexes } from './migrations.js';
 import { bootstrapAdmin } from './routes/admin.js';
+// Some networks/routers refuse the SRV lookup mongodb+srv:// needs; DNS_SERVERS=8.8.8.8,1.1.1.1 bypasses them.
+if (process.env.DNS_SERVERS) dns.setServers(process.env.DNS_SERVERS.split(',').map((s) => s.trim()));
 try {
   await connectDb(config.mongoUri);
 } catch (e) {

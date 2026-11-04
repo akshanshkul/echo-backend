@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Router } from 'express';
-import { User } from '../models/User.js';
+import { User, emailKey } from '../models/User.js';
 import { requireAuth, requireOnboarded, wrap, httpError } from '../middleware/auth.js';
 import {
   presignAvatarUpload,
@@ -14,6 +14,7 @@ import { emitConv } from '../realtime.js';
 const r = Router();
 r.use(requireAuth);
 const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
 // onboarding step 2: mobile number (E.164, one account per number)
 r.put(
@@ -129,7 +130,8 @@ r.get(
         { name: new RegExp(esc(q), 'i') },
         { username: new RegExp(esc(q), 'i') },
         ...(/^\+\d{8,15}$/.test(q) ? [{ phone: q }] : []),
-      ]; // phone: exact match only
+        ...(EMAIL_RE.test(q) ? [{ emailKey: emailKey(q) }] : []),
+      ]; // phone and email: exact match only, so the list can't be used to browse addresses
     res.json({ users: (await User.find(f).sort({ name: 1 }).limit(30)).map((u) => u.toPublic()) });
   }),
 );
